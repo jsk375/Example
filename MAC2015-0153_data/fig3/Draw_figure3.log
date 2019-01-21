@@ -1,0 +1,53 @@
+----------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/deaton/Documents/ASD_files/itag/calcs_05_11/may_2014/revision/
+> boston_final/fig3/Draw_figure3.log
+  log type:  text
+ opened on:  27 May 2016, 17:20:55
+
+. use ipd_cpi;
+
+. drop if del==.;
+(0 observations deleted)
+
+. count if del > 0;
+  59
+
+. count if del < 0;
+  51
+
+. list isocode lnp_cpi lnp_ipd del if del > 0.5;
+
+. list isocode lnp_cpi lnp_ipd del if del < -0.5;
+
+. list isocode lnp_cpi lnp_ipd del if isocode=="CHN"|isocode=="IND"|isocode=="IDN"
+> |isocode=="NGA";
+
+     +-------------------------------------------+
+     | isocode    lnp_cpi    lnp_ipd         del |
+     |-------------------------------------------|
+ 23. |     CHN   .1961728    .304022   -.1078492 |
+ 47. |     IDN   .4278231    .547946   -.1201229 |
+ 48. |     IND   .5029951   .3834116    .1195835 |
+ 77. |     NGA   .5818415    .559972    .0218695 |
+     +-------------------------------------------+
+
+. drop if del > 0.5;
+(0 observations deleted)
+
+. drop if del < -0.5;
+(0 observations deleted)
+
+. scatter del lny, ml(isocode)||scatter del lny if isocode=="IND", mc(gs4) msiz(hu
+> ge)||scatter del lny if isocode=="CHN", mc(gs10) msiz(huge) saving(Figure3, repl
+> ace) legend(off);
+(note: file Figure3.gph not found)
+(file Figure3.gph saved)
+
+. log close;
+      name:  <unnamed>
+       log:  /Users/deaton/Documents/ASD_files/itag/calcs_05_11/may_2014/revision/
+> boston_final/fig3/Draw_figure3.log
+  log type:  text
+ closed on:  27 May 2016, 17:20:57
+----------------------------------------------------------------------------------

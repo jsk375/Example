@@ -1,0 +1,45 @@
+----------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/deaton/Documents/ASD_files/itag/calcs_05_11/may_2014/revision/
+> boston_final/Draw_Figure2.log
+  log type:  text
+ opened on:  27 May 2016, 14:59:55
+
+. **data from ICP 2011 and from World Development Indicators;
+. use ICP2011_WDI_compare;
+(From 140410_ICP_WDI_comparisons.xlsx)
+
+. sort isocode;
+
+. by isocode: drop if _n>1;
+(3 observations deleted)
+
+. **global_results_summary from zicP2011;
+. merge 1:1 isocode using global_results_summary;
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             9
+        from master                         6  (_merge==1)
+        from using                          3  (_merge==2)
+
+    matched                               177  (_merge==3)
+    -----------------------------------------
+
+. drop _m;
+
+. gen lny=log(GDP_PC_PPP);
+(6 missing values generated)
+
+. scatter rat_ICP_X lny if rat_ICP_X < 10 & isocode ~="LBR",  yline(1, lc(black)) 
+> ml(isocode) saving(Figure2, replace);
+(note: file Figure2.gph not found)
+(file Figure2.gph saved)
+
+. log close;
+      name:  <unnamed>
+       log:  /Users/deaton/Documents/ASD_files/itag/calcs_05_11/may_2014/revision/
+> boston_final/Draw_Figure2.log
+  log type:  text
+ closed on:  27 May 2016, 14:59:56
+----------------------------------------------------------------------------------

@@ -1,0 +1,59 @@
+----------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/deaton/Documents/ASD_files/itag/calcs_05_11/may_2014/revision/
+> boston_final/fig1/draw_figure1.log
+  log type:  text
+ opened on:  27 May 2016, 16:47:44
+
+. use ppp_1993_2005;
+
+. keep isocode ppp_c_2005 c_name;
+
+. sort isocode;
+
+. merge isocode using ppp_private_cons_wdi2008, unique;
+(note: variable isocode was str4, now str7 to accommodate using data's values)
+
+. keep if _m==3;
+(60 observations deleted)
+
+. drop _m;
+
+. sort isocode;
+
+. gen rat=ppp_c_wdi2008/ppp_c_2005;
+(36 missing values generated)
+
+. merge isocode using wdi2008_gdp, unique;
+
+. tab _m;
+
+     _merge |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          2 |         59       28.23       28.23
+          3 |        150       71.77      100.00
+------------+-----------------------------------
+      Total |        209      100.00
+
+. keep if _m==3;
+(59 observations deleted)
+
+. drop _m;
+
+. drop gdp_2004 gdp_2006;
+
+. gen lny=log(real(gdp_2005));
+(1 missing value generated)
+
+. scatter rat lny, ml("isocode") yline(1, lc(black)) xlabel(6(1)12) saving(Figure1
+> , replace) legend(off);
+(note: file Figure1.gph not found)
+(file Figure1.gph saved)
+
+. log close;
+      name:  <unnamed>
+       log:  /Users/deaton/Documents/ASD_files/itag/calcs_05_11/may_2014/revision/
+> boston_final/fig1/draw_figure1.log
+  log type:  text
+ closed on:  27 May 2016, 16:47:46
+----------------------------------------------------------------------------------

@@ -1,0 +1,135 @@
+----------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/deaton/Documents/ASD_files/itag/calcs_05_11/may_2014/revision/
+> boston_final/fig4/Draw_Figure4.log
+  log type:  text
+ opened on:  28 May 2016, 08:55:12
+
+. use icp_ring_cpi_xr;
+(bettina_cpi_xr)
+
+. keep isocode cpi_2011 cpi_2005;
+
+. sort isocode;
+
+. merge 1:1 isocode using world2011;
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             0
+    matched                                18  (_merge==3)
+    -----------------------------------------
+
+. keep if _m==3;
+(0 observations deleted)
+
+. drop _m;
+
+. **converting currencies that changed using the official factors at time of Euro 
+> adoption;
+. local fix_EST=15.6466;
+
+. local fix_SVN=239.640;
+
+. replace xr2011=xr2011*`fix_EST' if isocode=="EST";
+(1 real change made)
+
+. replace xr2011=xr2011*`fix_SVN' if isocode=="SVN";
+(1 real change made)
+
+. gen pli2011=ppp_uk/xr2011;
+
+. gen pli2005=ppp_uk2005/xr2005;
+
+. **First redoing the original analysis;
+. gen dlncpi_icp=log(pli2011/pli2005)+log(xr2011/xr2005);
+
+. gen dlncpi=log(cpi_2011/cpi_2005);
+
+. gen ppp2005_table=ppp_uk2005;
+
+. gen ppp2011_table=ppp_uk;
+
+. qui summ dlncpi if isocode=="GBR";
+
+. replace dlncpi=dlncpi-r(mean);
+(18 real changes made)
+
+. gen lnppp2011=log(ppp2011_table);
+
+. gen lnppp2005=log(ppp2005_table);
+
+. **converting currencies that changed;
+. replace lnppp2011=lnppp2011+log(15.6466) if isocode=="EST";
+(1 real change made)
+
+. replace lnppp2011=lnppp2011+log(239.640) if isocode=="SVN";
+(1 real change made)
+
+. gen dlnppp=lnppp2011-lnppp2005;
+
+. gen dlnp_icp=dlnppp;
+
+. gen lnppp_ex=lnppp2005+dlncpi;
+
+. gen del=lnppp2011-lnppp_ex;
+
+. sort del;
+
+. gen lnpli2011=log(pli2011);
+
+. gen lnpli_ex=lnppp_ex-log(xr2011);
+
+. sort isocode;
+
+. merge 1:1 isocode using WDI2007_PY_PCGDP;
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                           190
+        from master                         0  (_merge==1)
+        from using                        190  (_merge==2)
+
+    matched                                18  (_merge==3)
+    -----------------------------------------
+
+. keep if _m==3;
+(190 observations deleted)
+
+. gen lny=ln(pc_GDP);
+(1 missing value generated)
+
+. scatter del lny, ml(isocode);
+
+. regress del lny;
+
+      Source |       SS           df       MS      Number of obs   =        17
+-------------+----------------------------------   F(1, 15)        =     34.56
+       Model |  .522516171         1  .522516171   Prob > F        =    0.0000
+    Residual |   .22681389        15  .015120926   R-squared       =    0.6973
+-------------+----------------------------------   Adj R-squared   =    0.6771
+       Total |  .749330062        16  .046833129   Root MSE        =    .12297
+
+------------------------------------------------------------------------------
+         del |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         lny |   .1605561   .0273128     5.88   0.000     .1023403     .218772
+       _cons |  -1.717091   .2447057    -7.02   0.000    -2.238669   -1.195513
+------------------------------------------------------------------------------
+
+. matrix b=e(b);
+
+. gen del_hat=b[1,1]*lny+b[1,2];
+(1 missing value generated)
+
+. scatter del lny, ml(isocode)||line del_hat lny, lc(black) legend(off) saving(Fig
+> ure4, replace);
+(file Figure4.gph saved)
+
+. log close;
+      name:  <unnamed>
+       log:  /Users/deaton/Documents/ASD_files/itag/calcs_05_11/may_2014/revision/
+> boston_final/fig4/Draw_Figure4.log
+  log type:  text
+ closed on:  28 May 2016, 08:55:16
+----------------------------------------------------------------------------------
